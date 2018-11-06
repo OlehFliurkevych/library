@@ -1,6 +1,7 @@
 package fo.project.library.service.impl;
 
 import fo.project.library.dto.AuthorDTO;
+import fo.project.library.dto.ListBooksDTO;
 import fo.project.library.dto.RestMessageDTO;
 import fo.project.library.entity.Author;
 import fo.project.library.entity.Book;
@@ -85,12 +86,17 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public RestMessageDTO addSetBooksForAuthor(List<Long> bookIdList, long authorId) {
-        if (bookIdList.isEmpty()) {
+    public RestMessageDTO addSetBooksForAuthor(ListBooksDTO listBooksDTO) {
+        if (listBooksDTO.getBooksIdList().isEmpty()) {
             return RestMessageDTO.createFailureMessage("List of books is empty");
         }
-        Author author = (Author) modelMapper.checkEntity(authorRepository, authorId);
-        List<Book> bookList = bookRepository.findAllById(bookIdList);
+        for (Long id : listBooksDTO.getBooksIdList()) {
+            if (id <= 0){
+                return RestMessageDTO.createFailureMessage("Incorrect id value");
+            }
+        }
+        Author author = (Author) modelMapper.checkEntity(authorRepository, listBooksDTO.getAuthorId());
+        List<Book> bookList = bookRepository.findAllById(listBooksDTO.getBooksIdList());
         Set<Book> bookSet = new HashSet<>(bookList);
         for (Book book : bookSet) {
             author.getBookSet().add(book);
@@ -102,8 +108,8 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public RestMessageDTO deleteAllBooksFromAuthor(long authorId) {
         Author author = (Author) modelMapper.checkEntity(authorRepository, authorId);
-        Set<Book> bookSet=author.getBookSet();
-        if (bookSet.isEmpty()){
+        Set<Book> bookSet = author.getBookSet();
+        if (bookSet.isEmpty()) {
             return RestMessageDTO.createFailureMessage("Books set is empty");
         }
         author.getBookSet().removeAll(bookSet);

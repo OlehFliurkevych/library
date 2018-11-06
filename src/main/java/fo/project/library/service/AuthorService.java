@@ -1,6 +1,7 @@
 package fo.project.library.service;
 
 import fo.project.library.dto.AuthorDTO;
+import fo.project.library.dto.ListBooksDTO;
 import fo.project.library.dto.RestMessageDTO;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public interface AuthorService {
 
     RestMessageDTO deleteBookFromAuthor(long bookId, long authorId);
 
-    RestMessageDTO addSetBooksForAuthor(List<Long> bookIdList, long authorId);
+    RestMessageDTO addSetBooksForAuthor(ListBooksDTO listBooksDTO);
 
     RestMessageDTO deleteAllBooksFromAuthor(long authorId);
 }
