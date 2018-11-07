@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/authors")
@@ -56,6 +57,15 @@ public class AuthorController {
         return authorService.addSetBooksForAuthor(listBooksDTO);
     }
 
+    @RequestMapping(value = "/older", method = RequestMethod.GET)
+    public RestMessageDTO<List<AuthorDTO>> getOlder55() {
+        return authorService.getAuthorsOlderThan55();
+    }
+
+    @RequestMapping(value = "/most", method = RequestMethod.GET)
+    public RestMessageDTO<AuthorDTO> getAuthorWhichHaveMostBooks() {
+        return authorService.getAuthorWhichHaveMostBooks();
+    }
 
 }
 

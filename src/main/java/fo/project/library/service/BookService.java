@@ -2,7 +2,10 @@ package fo.project.library.service;
 
 import fo.project.library.dto.BookDTO;
 import fo.project.library.dto.RestMessageDTO;
+import fo.project.library.enumeration.GenreEnum;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public interface BookService {
@@ -14,4 +17,8 @@ public interface BookService {
     RestMessageDTO deleteBookById(long id);
 
     RestMessageDTO updateBook(BookDTO bookDTO);
+
+    RestMessageDTO<List<BookDTO>> getBooksWithAuthorHaveMoreThanOneBook();
+
+    RestMessageDTO getCountBooksByGenre(GenreEnum genre);
 }

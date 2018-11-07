@@ -4,6 +4,7 @@ import fo.project.library.dto.BookDTO;
 import fo.project.library.dto.RestMessageDTO;
 import fo.project.library.entity.Author_Book;
 import fo.project.library.entity.Book;
+import fo.project.library.enumeration.GenreEnum;
 import fo.project.library.repository.AuthorBookRepository;
 import fo.project.library.repository.BookRepository;
 import fo.project.library.service.BookService;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -43,11 +45,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public RestMessageDTO<BookDTO> getBookById(long id) {
         Book book = (Book) modelMapper.checkEntity(bookRepository, id);
-        BookDTO bookDTO = modelMapper.map(book, BookDTO.class);
-        List<Author_Book> authorBookList = authorBookRepository.findAllByBookId(id);
-        for (Author_Book author_book : authorBookList) {
-            bookDTO.getAuthorDtoIdSet().add(author_book.getId());
-        }
+        BookDTO bookDTO = setAuthorForBookInBookDTO(book);
         return new RestMessageDTO(bookDTO, true);
     }
 
@@ -74,6 +72,38 @@ public class BookServiceImpl implements BookService {
         book.setRating(bookDTO.getRating());
         bookRepository.save(book);
         return RestMessageDTO.createCorrectMessage("Successfully updated book");
+    }
+
+    @Override
+    public RestMessageDTO<List<BookDTO>> getBooksWithAuthorHaveMoreThanOneBook() {
+        List<Book> bookList = bookRepository.findAll();
+        List<BookDTO> bookDTOList = new ArrayList<>();
+        for (Book book : bookList) {
+            if (book.getAuthorBookList().size() > 1) {
+                bookDTOList.add(setAuthorForBookInBookDTO(book));
+            }
+        }
+        if (bookDTOList.isEmpty()) {
+            return RestMessageDTO.createFailureMessage("BookDTO list is empty");
+        }
+        return new RestMessageDTO(bookDTOList, true);
+    }
+
+    @Override
+    public RestMessageDTO getCountBooksByGenre(GenreEnum genre) {
+        if (genre == null) {
+            throw new RuntimeException("Invalid data");
+        }
+        return RestMessageDTO.createCorrectMessage("Count of books by genre = " + bookRepository.findCountBooksByGenre(genre));
+    }
+
+    private BookDTO setAuthorForBookInBookDTO(Book book) {
+        BookDTO bookDTO = modelMapper.map(book, BookDTO.class);
+        List<Author_Book> authorBookList = authorBookRepository.findAllByBookId(book.getId());
+        for (Author_Book author_book : authorBookList) {
+            bookDTO.getAuthorDtoIdSet().add(author_book.getAuthor().getId());
+        }
+        return bookDTO;
     }
 
     private static boolean isInncorrectFielInputedsExist(BookDTO bookDTO) {

@@ -1,5 +1,6 @@
 package fo.project.library.service.impl;
 
+import fo.project.library.comparator.AuthorDTOByBornComparatorASC;
 import fo.project.library.dto.AuthorDTO;
 import fo.project.library.dto.ListBooksDTO;
 import fo.project.library.dto.RestMessageDTO;
@@ -14,9 +15,8 @@ import fo.project.library.utils.ObjectModelUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
@@ -47,11 +47,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public RestMessageDTO<AuthorDTO> getAuthorById(long id) {
         Author author = (Author) modelMapper.checkEntity(authorRepository, id);
-        AuthorDTO authorDTO = modelMapper.map(author, AuthorDTO.class);
-        List<Author_Book> authorBookList = authorBookRepository.findAllByAuthorId(id);
-        for (Author_Book author_book : authorBookList) {
-            authorDTO.getBookDtoIdSet().add(author_book.getId());
-        }
+        AuthorDTO authorDTO = setBooksForAuthorInAuthorDTO(author);
         return new RestMessageDTO(authorDTO, true);
     }
 
@@ -136,6 +132,45 @@ public class AuthorServiceImpl implements AuthorService {
         }
         authorRepository.save(author);
         return RestMessageDTO.createCorrectMessage("Successfully deleted all books from author");
+    }
+
+    @Override
+    public RestMessageDTO<List<AuthorDTO>> getAuthorsOlderThan55() {
+        List<Author> authorList = authorRepository.findAllByBornBefore(LocalDate.now().minusYears(55));
+        if (authorList.isEmpty()) {
+            return RestMessageDTO.createFailureMessage("Don't exist authors older 55 years old");
+        }
+        List<AuthorDTO> authorDTOList = new ArrayList<>();
+        for (Author author : authorList) {
+            authorDTOList.add(setBooksForAuthorInAuthorDTO(author));
+        }
+        Collections.sort(authorDTOList, new AuthorDTOByBornComparatorASC());
+        return new RestMessageDTO(authorDTOList, true);
+    }
+
+    @Override
+    public RestMessageDTO<AuthorDTO> getAuthorWhichHaveMostBooks() {
+        List<Author> authorList = authorRepository.findAll();
+        if (authorList == null) {
+            return RestMessageDTO.createFailureMessage("Don't exist any author's");
+        }
+        Author authorWhichHaveMostBooks = authorList.get(0);
+        for (Author author : authorList) {
+            if (author.getAuthorBookList().size() > authorWhichHaveMostBooks.getAuthorBookList().size()) {
+                authorWhichHaveMostBooks = author;
+            }
+        }
+        AuthorDTO authorDTO = setBooksForAuthorInAuthorDTO(authorWhichHaveMostBooks);
+        return new RestMessageDTO(authorDTO, true);
+    }
+
+    private AuthorDTO setBooksForAuthorInAuthorDTO(Author author) {
+        AuthorDTO authorDTO = modelMapper.map(author, AuthorDTO.class);
+        List<Author_Book> authorBookList = authorBookRepository.findAllByAuthorId(author.getId());
+        for (Author_Book author_book : authorBookList) {
+            authorDTO.getBookDtoIdSet().add(author_book.getBook().getId());
+        }
+        return authorDTO;
     }
 
     private Author_Book checkAuthorBook(long bookId, long authorId) {

@@ -5,6 +5,8 @@ import fo.project.library.dto.ListBooksDTO;
 import fo.project.library.dto.RestMessageDTO;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface AuthorService {
 
@@ -23,4 +25,8 @@ public interface AuthorService {
     RestMessageDTO addSetBooksForAuthor(ListBooksDTO listBooksDTO);
 
     RestMessageDTO deleteAllBooksFromAuthor(long authorId);
-}
+
+    RestMessageDTO<List<AuthorDTO>> getAuthorsOlderThan55();
+
+    RestMessageDTO<AuthorDTO> getAuthorWhichHaveMostBooks();
+ }
