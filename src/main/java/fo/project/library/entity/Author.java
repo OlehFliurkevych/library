@@ -10,6 +10,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -35,17 +36,8 @@ public class Author {
     @Column(columnDefinition = "DATE")
     private LocalDate born;
 
-    @ManyToMany
-    @JoinTable(
-            name="author_books",
-            joinColumns = {
-                    @JoinColumn(name = "author_id")
-            },
-            inverseJoinColumns = {
-                    @JoinColumn(name = "book_id")
-            }
-    )
-    private Set<Book> bookSet;
+    @OneToMany(mappedBy = "author")
+    private List<Author_Book> authorBookList;
 
     @Override
     public boolean equals(Object o) {

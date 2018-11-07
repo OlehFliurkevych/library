@@ -5,9 +5,6 @@ import fo.project.library.dto.ListBooksDTO;
 import fo.project.library.dto.RestMessageDTO;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Set;
-
 @Service
 public interface AuthorService {
 

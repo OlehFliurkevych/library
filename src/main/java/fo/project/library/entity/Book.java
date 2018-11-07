@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -36,8 +37,8 @@ public class Book {
 
     private int rating;
 
-    @ManyToMany(mappedBy = "bookSet")
-    private Set<Author> authorSet;
+    @OneToMany(mappedBy = "book")
+    private List<Author_Book> authorBookList;
 
     @Override
     public boolean equals(Object o) {
