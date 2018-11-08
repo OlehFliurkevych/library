@@ -12,6 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -37,7 +38,7 @@ public class BookDTO {
 
     private int rating;
 
-    private Set<Long> authorDtoIdSet;
+    private Set<Long> authorDtoIdSet = new HashSet<>();
 
 
     @Override
@@ -65,7 +66,7 @@ public class BookDTO {
                 '}';
     }
 
-    public static Book toBook(BookDTO bookDTO){
+    public static Book toBook(BookDTO bookDTO) {
         return new Book(
                 bookDTO.getName(),
                 bookDTO.getPublished(),

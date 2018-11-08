@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,7 +17,7 @@ public class ListBooksDTO {
 
     private long id;
 
-    private List<Long> booksIdList;
+    private List<Long> booksIdList=new ArrayList<>();
 
     private long authorId;
 

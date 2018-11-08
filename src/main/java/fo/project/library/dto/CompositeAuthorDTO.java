@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,7 +17,7 @@ public class CompositeAuthorDTO {
 
     private long id;
 
-    private List<AuthorDTO> authorDTOList;
+    private List<AuthorDTO> authorDTOList = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

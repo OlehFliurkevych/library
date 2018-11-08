@@ -13,6 +13,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -37,7 +38,7 @@ public class AuthorDTO {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate born;
 
-    private Set<Long> bookDtoIdSet;
+    private Set<Long> bookDtoIdSet = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
@@ -63,10 +64,10 @@ public class AuthorDTO {
                 '}';
     }
 
-    public static Author toAuthor(AuthorDTO authorDTO){
+    public static Author toAuthor(AuthorDTO authorDTO) {
         return new Author(
-               authorDTO.getName(),
-               authorDTO.getGender(),
+                authorDTO.getName(),
+                authorDTO.getGender(),
                 authorDTO.getBorn()
         );
     }

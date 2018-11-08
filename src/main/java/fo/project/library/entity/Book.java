@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -38,7 +39,7 @@ public class Book {
     private int rating;
 
     @OneToMany(mappedBy = "book")
-    private List<Author_Book> authorBookList;
+    private List<Author_Book> authorBookList = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

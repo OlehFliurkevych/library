@@ -62,8 +62,13 @@ public class AuthorServiceImpl implements AuthorService {
     public RestMessageDTO updateAuthor(AuthorDTO authorDTO) {
         Author author = authorRepository.findAuthorByName(authorDTO.getName());
         if (author != null) {
-            return RestMessageDTO.createFailureMessage("Author already exist");
+            return RestMessageDTO.createFailureMessage("Author with entered name already exist");
         }
+        author = authorRepository.getOne(authorDTO.getId());
+        if (author == null) {
+            return RestMessageDTO.createFailureMessage("Author don't exist");
+        }
+
         author = (Author) modelMapper.checkEntity(authorRepository, authorDTO.getId());
         author.setName(authorDTO.getName());
         author.setBorn(authorDTO.getBorn());
